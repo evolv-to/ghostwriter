@@ -42,7 +42,6 @@ const ABS_MT_TOUCH_MINOR: u16 = 49;
 const ABS_MT_ORIENTATION: u16 = 52;
 const ABS_MT_POSITION_X: u16 = 53;
 const ABS_MT_POSITION_Y: u16 = 54;
-// const ABS_MT_TOOL_TYPE: u16 = 55;
 const ABS_MT_TRACKING_ID: u16 = 57;
 const ABS_MT_PRESSURE: u16 = 58;
 
@@ -108,7 +107,6 @@ impl Touch {
         let (x, y) = self.virtual_to_input(xy);
         if let Some(device) = &mut self.device {
             trace!("touch_start at ({}, {})", x, y);
-            // sleep(Duration::from_millis(100));
             device.send_events(&[
                 InputEvent::new(EvdevEventType::ABSOLUTE.0, ABS_MT_SLOT, 0),
                 InputEvent::new(EvdevEventType::ABSOLUTE.0, ABS_MT_TRACKING_ID, 1),
@@ -153,11 +151,9 @@ impl Touch {
     }
 
     pub fn tap_middle_bottom(&mut self) -> Result<()> {
-        self.touch_start((384, 1023)).unwrap(); // middle bottom
+        self.touch_start((384, 1023))?; // middle bottom
         sleep(Duration::from_millis(100));
-        self.touch_stop().unwrap();
-        // sleep(Duration::from_millis(10));
-        // sleep(Duration::from_millis(100));
+        self.touch_stop()?;
         Ok(())
     }
 

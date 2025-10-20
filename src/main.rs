@@ -162,11 +162,9 @@ macro_rules! lock {
 
 fn draw_text(text: &str, keyboard: &mut Keyboard) -> Result<()> {
     info!("Drawing text to the screen.");
-    // keyboard.progress(".")?;
     keyboard.progress_end()?;
     keyboard.key_cmd_body()?;
     keyboard.string_to_keypresses(text)?;
-    // keyboard.string_to_keypresses("\n\n")?;
     Ok(())
 }
 
@@ -246,13 +244,13 @@ fn ghostwriter(args: &Args) -> Result<()> {
     let engine_name = determine_engine_name(&config.engine, &model)?;
     debug!("Engine: {}", engine_name);
 
-    if config.engine_base_url.is_some() {
-        debug!("Engine base URL: {}", config.engine_base_url.clone().unwrap());
-        engine_options.insert("base_url".to_string(), config.engine_base_url.clone().unwrap());
+    if let Some(base_url) = &config.engine_base_url {
+        debug!("Engine base URL: {}", base_url);
+        engine_options.insert("base_url".to_string(), base_url.clone());
     }
-    if config.engine_api_key.is_some() {
+    if let Some(api_key) = &config.engine_api_key {
         debug!("Using API key from CLI args");
-        engine_options.insert("api_key".to_string(), config.engine_api_key.clone().unwrap());
+        engine_options.insert("api_key".to_string(), api_key.clone());
     }
 
     if config.web_search {
@@ -291,7 +289,6 @@ fn ghostwriter(args: &Args) -> Result<()> {
                 }
             }
             if !no_draw {
-                // let mut keyboard = lock!(keyboard_clone);
                 if let Err(e) = draw_text(text, &mut lock!(keyboard_clone)) {
                     log::error!("Failed to draw text: {}", e);
                 }
@@ -356,8 +353,6 @@ fn ghostwriter(args: &Args) -> Result<()> {
         // Sleep a bit to differentiate the touches
         sleep(Duration::from_millis(100));
         lock!(touch).tap_middle_bottom()?;
-        // sleep(Duration::from_millis(1000));
-        // lock!(keyboard).progress("Taking screenshot...")?;
 
         info!("Getting screenshot (or loading input image)");
         let base64_image = if let Some(input_png) = &config.input_png {
@@ -412,7 +407,7 @@ fn ghostwriter(args: &Args) -> Result<()> {
 
         engine.add_text_content(prompt);
 
-        info!("Executing the engine (call out to {}", engine_name);
+        info!("Executing the engine (call out to {})", engine_name);
         lock!(keyboard).progress("thinking...")?;
         if engine.execute().is_err() {
             lock!(keyboard).progress(" model error. ")?;

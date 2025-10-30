@@ -125,6 +125,20 @@ Meanwhile I have another terminal where I have ssh'd to the remarkable. I ctrl-C
 
 When I want to do a build for others, I tag main with like `v2026.09.21-01` and that kicks off a github action that creates the latest release.
 
+### Code Quality
+
+The lint should stay clean! Before committing changes:
+
+```sh
+# Format code
+cargo fmt
+
+# Check for lint issues
+cargo clippy --all-targets --all-features -- -D warnings
+```
+
+All clippy warnings should be addressed (not suppressed) to maintain code quality.
+
 ## Status / Journal
 
 * **2024-10-06** - Bootstrapping

@@ -494,7 +494,7 @@ impl Touch {
     }
 
     fn is_in_trigger_zone(x: i32, y: i32, trigger_corner: TriggerCorner) -> bool {
-        const CORNER_SIZE: i32 = 68; // Size of the trigger zone (68x68 pixels)
+        const CORNER_SIZE: i32 = 120; // Size of the trigger zone (120x120 — 68 was a ~1.2cm target, too easy to miss)
 
         match trigger_corner {
             TriggerCorner::UpperRight => x > VIRTUAL_WIDTH as i32 - CORNER_SIZE && y < CORNER_SIZE,

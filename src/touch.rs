@@ -27,6 +27,7 @@ pub enum TriggerCorner {
     UpperLeft,
     LowerRight,
     LowerLeft,
+    TopCenter,
 }
 
 impl TriggerCorner {
@@ -36,8 +37,9 @@ impl TriggerCorner {
             "ul" | "upper-left" => Ok(TriggerCorner::UpperLeft),
             "lr" | "lower-right" => Ok(TriggerCorner::LowerRight),
             "ll" | "lower-left" => Ok(TriggerCorner::LowerLeft),
+            "tc" | "top-center" => Ok(TriggerCorner::TopCenter),
             _ => Err(anyhow::anyhow!(
-                "Invalid trigger corner: {}. Use UR, UL, LR, LL, upper-right, upper-left, lower-right, or lower-left",
+                "Invalid trigger corner: {}. Use UR, UL, LR, LL, TC, upper-right, upper-left, lower-right, lower-left, or top-center",
                 s
             )),
         }
@@ -501,6 +503,11 @@ impl Touch {
             TriggerCorner::UpperLeft => x < CORNER_SIZE && y < CORNER_SIZE,
             TriggerCorner::LowerRight => x > VIRTUAL_WIDTH as i32 - CORNER_SIZE && y > VIRTUAL_HEIGHT as i32 - CORNER_SIZE,
             TriggerCorner::LowerLeft => x < CORNER_SIZE && y > VIRTUAL_HEIGHT as i32 - CORNER_SIZE,
+            // 200px-wide strip centered on the top edge — the only region no
+            // rM UI element or resting wrist competes for
+            TriggerCorner::TopCenter => {
+                y < 80 && (x - VIRTUAL_WIDTH as i32 / 2).abs() < 100
+            }
         }
     }
 
